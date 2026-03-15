@@ -172,8 +172,8 @@ Authorization: Bearer <token>
 
 ## Screenshots
 
-- Login success: `screenshots/login-success.png`
-- Token response: `screenshots/token-response.png`
-- Protected route access: `screenshots/protected-route.png`
+- Login success: `screenshots/Screenshot 2026-03-15 at 21.47.06.png`
+- Token response: `screenshots/Screenshot 2026-03-15 at 21.53.17png`
 
-> Replace placeholder files with actual Postman screenshots before submission.
+
+
