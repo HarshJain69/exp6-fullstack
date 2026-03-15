@@ -1,0 +1,218 @@
+{
+  "info": {
+    "_postman_id": "9f90f2b6-89f2-4d46-a3a3-c2c7fa53d9aa",
+    "name": "Experiment 6 - JWT Authentication Backend",
+    "description": "Postman collection for Experiment 6 JWT authentication backend by Harsh Partap Jain (UID: 23BAI70194).",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Health Check",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            ""
+          ]
+        },
+        "description": "Checks whether the API server is running."
+      },
+      "response": [],
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Status code is 200', function () {",
+              "  pm.response.to.have.status(200);",
+              "});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Login",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"username\": \"{{username}}\",\n  \"password\": \"{{password}}\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{baseUrl}}/login",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "login"
+          ]
+        },
+        "description": "Authenticates user and returns JWT token."
+      },
+      "response": [],
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Status code is 200', function () {",
+              "  pm.response.to.have.status(200);",
+              "});",
+              "",
+              "var jsonData = pm.response.json();",
+              "",
+              "pm.test('Response has token', function () {",
+              "  pm.expect(jsonData).to.have.property('token');",
+              "  pm.expect(jsonData.token).to.be.a('string').and.not.empty;",
+              "});",
+              "",
+              "pm.environment.set('jwtToken', jsonData.token);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Protected Route (With Token)",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{jwtToken}}"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/protected",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "protected"
+          ]
+        },
+        "description": "Accesses JWT protected route using Bearer token from login response."
+      },
+      "response": [],
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Status code is 200', function () {",
+              "  pm.response.to.have.status(200);",
+              "});",
+              "",
+              "var jsonData = pm.response.json();",
+              "",
+              "pm.test('Protected response contains user', function () {",
+              "  pm.expect(jsonData).to.have.property('user');",
+              "  pm.expect(jsonData.user).to.have.property('username');",
+              "});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Protected Route (Without Token)",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/protected",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "protected"
+          ]
+        },
+        "description": "Validates unauthorized access when token is missing."
+      },
+      "response": [],
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Status code is 401', function () {",
+              "  pm.response.to.have.status(401);",
+              "});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Logout",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/logout",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "logout"
+          ]
+        },
+        "description": "Stateless logout endpoint (client should discard token)."
+      },
+      "response": [],
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Status code is 200', function () {",
+              "  pm.response.to.have.status(200);",
+              "});"
+            ]
+          }
+        }
+      ]
+    }
+  ],
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:5000"
+    },
+    {
+      "key": "username",
+      "value": "user123"
+    },
+    {
+      "key": "password",
+      "value": "password123"
+    },
+    {
+      "key": "jwtToken",
+      "value": ""
+    }
+  ]
+}
